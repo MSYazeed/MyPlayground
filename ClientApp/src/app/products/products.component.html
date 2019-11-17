@@ -1,0 +1,19 @@
+<h3>
+  Enter Product ID: <input type="text" [(ngModel)] = "productId"/> <button (click)="send()">Send</button>
+</h3>
+<table class='table table-striped'>
+  <thead>
+    <tr>
+      <th>Id</th>
+      <th>Name</th>
+      <th>Price</th>
+    </tr>
+  </thead>
+  <tbody *ngIf ="product">
+    <tr>
+      <td>{{ product.id }}</td>
+      <td>{{ product.name }}</td>
+      <td>{{ product.price }}</td>
+    </tr>
+  </tbody>
+</table>
