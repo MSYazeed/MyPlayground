@@ -1,6 +1,25 @@
 <h1>Weather forecast</h1>
 
-<p>This component demonstrates fetching data from the server.</p>
+<div>
+
+  <mat-form-field>
+    <input matInput placeholder="Search" aria-label="State" [matAutocomplete]="auto" [formControl]="searchCitiesCtrl">
+    <mat-autocomplete #auto="matAutocomplete" (optionSelected)="onCitySelected($event)">
+      <mat-option *ngIf="isLoading" class="is-loading">Loading...</mat-option>
+      <ng-container *ngIf="!isLoading">
+        <mat-option *ngFor="let city of cities" [value]="city.display_name">
+          <span>{{city.display_name}}</span>
+        </mat-option>
+      </ng-container>
+    </mat-autocomplete>
+  </mat-form-field>
+
+  <br>
+
+  <ng-container *ngIf="errorMsg; else elseTemplate">
+    {{errorMsg}}
+  </ng-container>
+</div>
 
 <p *ngIf="!forecasts"><em>Loading...</em></p>
 

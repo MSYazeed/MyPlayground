@@ -3,22 +3,15 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Net.Http;
 using System.Threading.Tasks;
-using Microsoft.AspNetCore.Mvc;
+using MyPlayground.Controllers;
 using Newtonsoft.Json;
 using Newtonsoft.Json.Linq;
 
-namespace MyPlayground.Controllers
+namespace MyPlayground.Services
 {
-    [Route("api/forecast")]
-    public class ForecastController : Controller
+    public class WeatherForecastService
     {
-        private static readonly string[] Summaries =
-        {
-            "Freezing", "Bracing", "Chilly", "Cool", "Mild", "Warm", "Balmy", "Hot", "Sweltering", "Scorching"
-        };
-
-        [HttpGet("[action]")]
-        public async Task<IEnumerable<WeatherForecast>> WeatherForecasts()
+        public async Task<IEnumerable<WeatherForecast>> GetWeatherForecasts()
         {
             var secretKey = "1278a4bf12113ed647b1a64f13f354c6";
 
@@ -54,15 +47,6 @@ namespace MyPlayground.Controllers
             }
 
             return forecastList;
-        }
-
-        public class WeatherForecast
-        {
-            public string DateFormatted { get; set; }
-            public int TemperatureC { get; set; }
-            public int TemperatureCMax { get; set; }
-            public int TemperatureCMin { get; set; }
-            public string Summary { get; set; }
         }
     }
 }
