@@ -1,7 +1,7 @@
 import { Component, Inject, OnInit } from '@angular/core';
 import { HttpClient } from '@angular/common/http';
 import { FormControl } from '@angular/forms';
-import { debounceTime, tap, switchMap, finalize } from 'rxjs/operators';
+import { debounceTime, tap, switchMap, finalize, filter } from 'rxjs/operators';
 
 @Component({
   selector: 'app-forecast',
@@ -11,7 +11,6 @@ export class ForecastComponent {
   public forecasts: WeatherForecast[];
   searchCitiesCtrl = new FormControl('');
   cities: any;
-  city: object[];
   isSelected: boolean;
   isLoading = false;
   errorMsg: string;
@@ -20,8 +19,9 @@ export class ForecastComponent {
   }
 
   ngOnInit() {
-    this.searchCitiesCtrl.valueChanges
+    this.searchCitiesCtrl.valueChanges 
       .pipe(
+        filter(x => typeof x === 'string'),
         debounceTime(500),
         tap(() => {
           this.errorMsg = "";
@@ -37,29 +37,35 @@ export class ForecastComponent {
         )
       )
       .subscribe(data => {
-        if (data.Res.Coverage == null) {
+        if (data['Res']['Coverage'] == null) {
           this.errorMsg = "can't find any city with that name";
           this.cities = [];
         } else {
           this.errorMsg = "";
-          this.cities = data.Res.Coverage.Cities.City;
+          this.cities = data['Res']['Coverage']['Cities']['City'];
         }
-        console.log(this.city);
+        console.log(this.searchCitiesCtrl.value);
       });
   }
 
-  onCitySelected($event){
-    console.log($event);
-  }
+  //onCitySelected($event){
+  //  console.log($event);
+  //}
 
   getForecast() {
-    console.log(this.city);
-    this.http.get<WeatherForecast[]>(this.baseUrl + 'api/forecast/WeatherForecasts').subscribe(result => {
-      this.forecasts = result;
-    }, error => console.error(error));
+    if (this.searchCitiesCtrl.value) {
+      this.http.get<WeatherForecast[]>(this.baseUrl +
+        `api/forecast/search/${this.searchCitiesCtrl.value['y']},${this.searchCitiesCtrl.value['x']}`).subscribe(result => {
+          this.forecasts = result;
+        },
+        error => console.error(error));
+    }
+  }
+
+  displayFn(val: object[]) {
+    return val ? val['display_name'] : val;
   }
 }
-
 
 interface WeatherForecast {
   dateFormatted: string;

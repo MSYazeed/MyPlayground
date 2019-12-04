@@ -4,20 +4,21 @@ using System.Linq;
 using System.Net.Http;
 using System.Threading.Tasks;
 using MyPlayground.Controllers;
+using MyPlayground.Models;
 using Newtonsoft.Json;
 using Newtonsoft.Json.Linq;
 
 namespace MyPlayground.Services
 {
-    public class WeatherForecastService
+    public class ForecastService
     {
-        public async Task<IEnumerable<WeatherForecast>> GetWeatherForecasts()
+        public async Task<IEnumerable<Forecast>> GetWeatherForecasts(double latitude, double longitude)
         {
             var secretKey = "1278a4bf12113ed647b1a64f13f354c6";
 
             var baseUrl = "https://api.darksky.net/forecast/";
 
-            var location = "48.1351,11.5820";
+            var location = $"{latitude},{longitude}";
 
             var exclusions = "exclude=[minutely,hourly,flags]";
 
@@ -31,13 +32,13 @@ namespace MyPlayground.Services
             }
         }
 
-        private IEnumerable<WeatherForecast> MapWeatherForecasts(JObject forecasts)
+        private IEnumerable<Forecast> MapWeatherForecasts(JObject forecasts)
         {
-            var forecastList = new List<WeatherForecast>();
+            var forecastList = new List<Forecast>();
             var dateTime = new System.DateTime(1970, 1, 1, 0, 0, 0, 0);
             foreach (var forecast in forecasts["daily"]["data"])
             {
-                forecastList.Add(new WeatherForecast
+                forecastList.Add(new Forecast
                 {
                     TemperatureCMax = forecast["temperatureMax"].Value<int>(),
                     TemperatureCMin = forecast["temperatureMin"].Value<int>(),

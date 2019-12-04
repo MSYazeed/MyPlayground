@@ -1,8 +1,6 @@
-using System;
-
-namespace MyPlayground.Controllers
+namespace MyPlayground.Models
 {
-    public class WeatherForecast
+    public class Forecast
     {
         public string DateFormatted { get; set; }
         public int TemperatureC { get; set; }

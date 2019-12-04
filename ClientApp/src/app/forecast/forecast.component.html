@@ -4,10 +4,10 @@
 
   <mat-form-field>
     <input matInput placeholder="Search" aria-label="State" [matAutocomplete]="auto" [formControl]="searchCitiesCtrl">
-    <mat-autocomplete #auto="matAutocomplete" (optionSelected)="onCitySelected($event)">
+    <mat-autocomplete #auto="matAutocomplete" [displayWith]="displayFn" (optionSelected)="getForecast()">
       <mat-option *ngIf="isLoading" class="is-loading">Loading...</mat-option>
       <ng-container *ngIf="!isLoading">
-        <mat-option *ngFor="let city of cities" [value]="city.display_name">
+        <mat-option *ngFor="let city of cities" [value]="city">
           <span>{{city.display_name}}</span>
         </mat-option>
       </ng-container>
