@@ -1,16 +1,14 @@
 ﻿using System;
 using System.Collections.Generic;
-using System.Linq;
 using System.Net.Http;
 using System.Threading.Tasks;
-using MyPlayground.Controllers;
 using MyPlayground.Models;
 using Newtonsoft.Json;
 using Newtonsoft.Json.Linq;
 
 namespace MyPlayground.Services
 {
-    public class ForecastService
+    public class ForecastService : IForecastService
     {
         public async Task<IEnumerable<Forecast>> GetWeatherForecasts(double latitude, double longitude)
         {
@@ -32,12 +30,11 @@ namespace MyPlayground.Services
             }
         }
 
-        private IEnumerable<Forecast> MapWeatherForecasts(JObject forecasts)
+        public IEnumerable<Forecast> MapWeatherForecasts(JObject forecasts)
         {
             var forecastList = new List<Forecast>();
-            var dateTime = new System.DateTime(1970, 1, 1, 0, 0, 0, 0);
+            var dateTime = new DateTime(1970, 1, 1, 0, 0, 0, 0);
             foreach (var forecast in forecasts["daily"]["data"])
-            {
                 forecastList.Add(new Forecast
                 {
                     TemperatureCMax = forecast["temperatureMax"].Value<int>(),
@@ -45,7 +42,6 @@ namespace MyPlayground.Services
                     Summary = forecast["summary"].Value<string>(),
                     DateFormatted = dateTime.AddSeconds(forecast["time"].Value<double>()).ToString("d")
                 });
-            }
 
             return forecastList;
         }

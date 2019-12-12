@@ -9,17 +9,18 @@ namespace MyPlayground.Controllers
     [Route("api/forecast")]
     public class ForecastController : Controller
     {
-        public ForecastController()
-        {
+        private readonly IForecastService _forecastService;
 
+        public ForecastController(IForecastService forecastService)
+        {
+            _forecastService = forecastService;
         }
 
         [HttpGet]
         [Route("search/{latitude},{longitude}")]
-        public async Task<IEnumerable<Forecast>> WeatherForecasts(double latitude, double longitude)
+        public async Task<IEnumerable<Forecast>> WeatherForecasts(/*[FromServices] IForecastService forecastService,*/ double latitude, double longitude)
         {
-            var weatherForecastService = new ForecastService();
-            return await weatherForecastService.GetWeatherForecasts(latitude, longitude);
+            return await _forecastService.GetWeatherForecasts(latitude, longitude);
         }
     }
 }
