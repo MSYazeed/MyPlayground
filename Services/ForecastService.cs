@@ -1,7 +1,9 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.Linq;
 using System.Net.Http;
 using System.Threading.Tasks;
+using MyPlayground.DBContext;
 using MyPlayground.Models;
 using Newtonsoft.Json;
 using Newtonsoft.Json.Linq;
@@ -44,6 +46,15 @@ namespace MyPlayground.Services
                 });
 
             return forecastList;
+        }
+
+        public IEnumerable<CitiesList> GetCities(string city)
+        {
+            using (var db = new MyPlaygroundDbContext("server=(LocalDb)\\MSSQLLocalDB;database=MyPlayground;trusted_connection=true;"))
+            {
+                var citiesList = db.CitiesList.Where(list => list.Name.Contains(city)).ToList();
+                return citiesList.Take(5);
+            }
         }
     }
 }

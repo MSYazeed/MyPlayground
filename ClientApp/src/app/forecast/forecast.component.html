@@ -8,7 +8,7 @@
       <mat-option *ngIf="isLoading" class="is-loading">Loading...</mat-option>
       <ng-container *ngIf="!isLoading">
         <mat-option *ngFor="let city of cities" [value]="city">
-          <span>{{city.display_name}}</span>
+          <span>{{city.name}}, {{city.countryCode}}</span>
         </mat-option>
       </ng-container>
     </mat-autocomplete>
@@ -41,3 +41,4 @@
     </tr>
   </tbody>
 </table>
+

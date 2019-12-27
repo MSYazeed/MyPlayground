@@ -2,9 +2,11 @@ using Microsoft.AspNetCore.Builder;
 using Microsoft.AspNetCore.Hosting;
 using Microsoft.AspNetCore.HttpsPolicy;
 using Microsoft.AspNetCore.SpaServices.AngularCli;
+using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Hosting;
+using MyPlayground.DBContext;
 using MyPlayground.Services;
 
 namespace MyPlayground
@@ -23,6 +25,10 @@ namespace MyPlayground
         {
             services.AddControllersWithViews();
             services.AddScoped<IForecastService, ForecastService>();
+            //services.AddDbContext<MyPlaygroundDbContext>(options =>
+            //{
+            //    options.UseSqlServer(Configuration.GetConnectionString("MyConnection"));
+            //});
 
             // In production, the Angular files will be served from this directory
             services.AddSpaStaticFiles(configuration =>

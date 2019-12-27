@@ -10,7 +10,7 @@ import { debounceTime, tap, switchMap, finalize, filter } from 'rxjs/operators';
 export class ForecastComponent {
   public forecasts: WeatherForecast[];
   searchCitiesCtrl = new FormControl('');
-  cities: any;
+  cities: City[];
   isSelected: boolean;
   isLoading = false;
   errorMsg: string;
@@ -21,14 +21,15 @@ export class ForecastComponent {
   ngOnInit() {
     this.searchCitiesCtrl.valueChanges 
       .pipe(
-        filter(x => typeof x === 'string'),
+        filter(x => typeof x === 'string' && x.length >= 3),
         debounceTime(500),
         tap(() => {
           this.errorMsg = "";
           this.cities = [];
           this.isLoading = true;
         }),
-        switchMap(value => this.http.get("https://transit.api.here.com/v3/coverage/search.json?app_id=vRVIYx2z52djI1Kzveao&app_code=JYbQszFTaV-PM66WdXOlXw&max=10&details=1&politicalview=CHN&lang=en&name=" + value)
+        switchMap(value => this.http.get<City[]>(this.baseUrl +
+          `api/city/search/${value}`/*"https://transit.api.here.com/v3/coverage/search.json?app_id=vRVIYx2z52djI1Kzveao&app_code=JYbQszFTaV-PM66WdXOlXw&max=10&details=1&politicalview=CHN&lang=en&name=" + value*/)
           .pipe(
             finalize(() => {
               this.isLoading = false;
@@ -36,15 +37,14 @@ export class ForecastComponent {
           )
         )
       )
-      .subscribe(data => {
-        if (data['Res']['Coverage'] == null) {
+      .subscribe(citiesList => {
+        if (citiesList == null) {
           this.errorMsg = "can't find any city with that name";
           this.cities = [];
         } else {
           this.errorMsg = "";
-          this.cities = data['Res']['Coverage']['Cities']['City'];
+          this.cities = citiesList;
         }
-        console.log(this.searchCitiesCtrl.value);
       });
   }
 
@@ -55,15 +55,15 @@ export class ForecastComponent {
   getForecast() {
     if (this.searchCitiesCtrl.value) {
       this.http.get<WeatherForecast[]>(this.baseUrl +
-        `api/forecast/search/${this.searchCitiesCtrl.value['y']},${this.searchCitiesCtrl.value['x']}`).subscribe(result => {
+        `api/forecast/search/${this.searchCitiesCtrl.value.lat},${this.searchCitiesCtrl.value.long}`).subscribe(result => {
           this.forecasts = result;
         },
         error => console.error(error));
     }
   }
 
-  displayFn(val: object[]) {
-    return val ? val['display_name'] : val;
+  displayFn(val: City) {
+    return val ? val.name + ', ' + val.countryCode : val;
   }
 }
 
@@ -73,3 +73,12 @@ interface WeatherForecast {
   temperatureCMax: number;
   summary: string;
 }
+
+interface City {
+  id: number;
+  name: string;
+  countryCode: string;
+  lat: number;
+  long: number;
+}
+

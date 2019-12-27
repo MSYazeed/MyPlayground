@@ -1,5 +1,6 @@
 ﻿using System.Collections.Generic;
 using System.Threading.Tasks;
+using MyPlayground.DBContext;
 using MyPlayground.Models;
 using Newtonsoft.Json.Linq;
 
@@ -9,5 +10,6 @@ namespace MyPlayground.Services
     {
         Task<IEnumerable<Forecast>> GetWeatherForecasts(double latitude, double longitude);
         IEnumerable<Forecast> MapWeatherForecasts(JObject forecasts);
+        IEnumerable<CitiesList> GetCities(string city);
     }
 }
