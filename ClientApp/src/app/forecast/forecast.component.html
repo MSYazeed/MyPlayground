@@ -1,9 +1,11 @@
 <h1>Weather forecast</h1>
 
-<div>
-
+<br />
+<br />
+<div class="search-container">
   <mat-form-field>
-    <input matInput placeholder="Search" aria-label="State" [matAutocomplete]="auto" [formControl]="searchCitiesCtrl">
+    <input matInput aria-label="State" [matAutocomplete]="auto" [formControl]="searchCitiesCtrl">
+    <mat-placeholder>City, Country</mat-placeholder>
     <mat-autocomplete #auto="matAutocomplete" [displayWith]="displayFn" (optionSelected)="getForecast()">
       <mat-option *ngIf="isLoading" class="is-loading">Loading...</mat-option>
       <ng-container *ngIf="!isLoading">
@@ -14,31 +16,68 @@
     </mat-autocomplete>
   </mat-form-field>
 
-  <br>
-
+  <br />
   <ng-container *ngIf="errorMsg; else elseTemplate">
     {{errorMsg}}
   </ng-container>
 </div>
 
-<p *ngIf="!forecasts"><em>Loading...</em></p>
+<!-- <p *ngIf="!forecasts"><em>Loading...</em></p>-->
 
-<table class='table table-striped' *ngIf="forecasts">
-  <thead>
-    <tr>
-      <th>Date</th>
-      <th>Temp. (C) Min</th>
-      <th>Temp. (C) Max</th>
-      <th>Summary</th>
-    </tr>
-  </thead>
-  <tbody>
-    <tr *ngFor="let forecast of forecasts">
-      <td>{{ forecast.dateFormatted }}</td>
-      <td>{{ forecast.temperatureCMin }}</td>
-      <td>{{ forecast.temperatureCMax }}</td>
-      <td>{{ forecast.summary }}</td>
-    </tr>
-  </tbody>
-</table>
+<div class='wrapper' *ngIf="forecasts">
 
+  <div class='panel'>
+    <h2 class='city' id='city'></h2>
+    <div class='weather' id='weather'>
+      <div class='group secondary'>
+        <h3 id='dt'>{{forecasts.currentDateTimeFormatted}}</h3>
+        <h3 id='description'>{{forecasts.currentSummary}}</h3>
+      </div>
+      <div class='group secondary'>
+        <h3 id='wind'>Wind speed: {{forecasts.currentWindSpeed}} m/s</h3>
+        <h3 id='humidity'>Humidity: {{forecasts.currentHumidity * 100}} %</h3>
+      </div>
+      <div class='temperature' id='temperature'>
+        <h1 class='temp' id='temp'>{{convertTemperature(forecasts.currentTemperatureC)}}
+          <i id="condition" class="wi wi-day-sunny" *ngIf="forecasts.currentCondition === conditions.ClearDay"></i>
+          <i id="condition" class="wi wi-night-clear" *ngIf="forecasts.currentCondition === conditions.ClearNight"></i>
+          <i id="condition" class="wi wi-night-partly-cloudy"
+            *ngIf="forecasts.currentCondition === conditions.PartlyCloudyDay"></i>
+          <i id="condition" class="wi wi-night-alt-partly-cloudy"
+            *ngIf="forecasts.currentCondition === conditions.PartlyCloudyNight"></i>
+          <i id="condition" class="wi wi-cloudy" *ngIf="forecasts.currentCondition === conditions.Cloudy"></i>
+          <i id="condition" class="wi wi-night-cloudy-windy" *ngIf="forecasts.currentCondition === conditions.Wind"></i>
+          <i id="condition" class="wi wi-rain" *ngIf="forecasts.currentCondition === conditions.Rain"></i>
+          <i id="condition" class="wi wi-thunderstorm"
+            *ngIf="forecasts.currentCondition === conditions.Thunderstorm"></i>
+          <i id="condition" class="wi wi-snow" *ngIf="forecasts.currentCondition === conditions.Snow"></i>
+          <i id="condition" class="wi wi-fog" *ngIf="forecasts.currentCondition === conditions.Fog"></i>
+          <i id="condition" class="wi wi-night-sleet" *ngIf="forecasts.currentCondition === conditions.Sleet"></i>
+
+          <a class='celsius' id='celsius' [class.active]="celsius" (click)="celsius = true" [routerLink]="">&deg;C</a>
+          <span class='divider secondary'>|</span>
+          <a class='fahrenheit' id='fahrenheit' [class.active]="!celsius" (click)="celsius = false"
+            [routerLink]="">&deg;F</a>
+        </h1>
+      </div>
+      <div class='forecast' id='forecast'></div>
+    </div>
+  </div>
+  <div *ngFor="let forecast of forecasts.daysForecast | slice:1:6; let i=index" class='block'>
+    <h3 class='secondary'> {{forecast.day}} </h3>
+    <h2 class='high'> {{convertTemperature(forecast.temperatureCMax)}} </h2>
+    <h4 class='secondary'> {{convertTemperature(forecast.temperatureCMin)}} </h4>
+    <i class="wi wi-day-sunny secondary" *ngIf="forecast.condition === conditions.ClearDay"></i>
+    <i class="wi wi-night-clear secondary" *ngIf="forecast.condition === conditions.ClearNight"></i>
+    <i class="wi wi-night-partly-cloudy secondary" *ngIf="forecast.condition === conditions.PartlyCloudyDay"></i>
+    <i class="wi wi-night-alt-partly-cloudy secondary"
+      *ngIf="forecast.condition === conditions.PartlyCloudyNight"></i>
+    <i class="wi wi-cloudy secondary" *ngIf="forecast.condition === conditions.Cloudy"></i>
+    <i class="wi wi-night-cloudy-windy secondary" *ngIf="forecast.condition === conditions.Wind"></i>
+    <i class="wi wi-rain secondary" *ngIf="forecast.condition === conditions.Rain"></i>
+    <i class="wi wi-thunderstorm secondary" *ngIf="forecast.condition === conditions.Thunderstorm"></i>
+    <i class="wi wi-snow secondary" *ngIf="forecast.condition === conditions.Snow"></i>
+    <i class="wi wi-fog secondary" *ngIf="forecast.condition === conditions.Fog"></i>
+    <i class="wi wi-night-sleet secondary" *ngIf="forecast.condition === conditions.Sleet"></i>
+  </div>
+</div>

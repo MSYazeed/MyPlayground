@@ -12,7 +12,7 @@ namespace MyPlayground.Services
 {
     public class ForecastService : IForecastService
     {
-        public async Task<IEnumerable<Forecast>> GetWeatherForecasts(double latitude, double longitude)
+        public async Task<Forecast> GetWeatherForecasts(double latitude, double longitude)
         {
             var secretKey = "1278a4bf12113ed647b1a64f13f354c6";
 
@@ -32,25 +32,36 @@ namespace MyPlayground.Services
             }
         }
 
-        public IEnumerable<Forecast> MapWeatherForecasts(JObject forecasts)
+        public Forecast MapWeatherForecasts(JObject forecasts)
         {
-            var forecastList = new List<Forecast>();
+            var forecastInfo = new Forecast();
             var dateTime = new DateTime(1970, 1, 1, 0, 0, 0, 0);
+            forecastInfo.CurrentDateTimeFormatted = dateTime.AddSeconds(forecasts["currently"]["time"].Value<int>())
+                .ToString("dddd hh:mm");
+            forecastInfo.CurrentTemperatureC = forecasts["currently"]["temperature"].Value<double>();
+            forecastInfo.CurrentHumidity = forecasts["currently"]["humidity"].Value<double>();
+            forecastInfo.CurrentWindSpeed = forecasts["currently"]["windSpeed"].Value<double>();
+            forecastInfo.CurrentSummary = forecasts["currently"]["summary"].Value<string>();
+            forecastInfo.CurrentCondition = forecasts["currently"]["icon"].Value<string>();
+
             foreach (var forecast in forecasts["daily"]["data"])
-                forecastList.Add(new Forecast
+                forecastInfo.DaysForecast.Add(new DaysForecast
                 {
                     TemperatureCMax = forecast["temperatureMax"].Value<int>(),
                     TemperatureCMin = forecast["temperatureMin"].Value<int>(),
                     Summary = forecast["summary"].Value<string>(),
-                    DateFormatted = dateTime.AddSeconds(forecast["time"].Value<double>()).ToString("d")
+                    Day = dateTime.AddSeconds(forecast["time"].Value<double>()).ToString("dddd"),
+                    Condition = forecast["icon"].Value<string>()
                 });
 
-            return forecastList;
+            return forecastInfo;
         }
 
         public IEnumerable<CitiesList> GetCities(string city)
         {
-            using (var db = new MyPlaygroundDbContext("server=(LocalDb)\\MSSQLLocalDB;database=MyPlayground;trusted_connection=true;"))
+            using (var db =
+                new MyPlaygroundDbContext(
+                    "server=(LocalDb)\\MSSQLLocalDB;database=MyPlayground;trusted_connection=true;"))
             {
                 var citiesList = db.CitiesList.Where(list => list.Name.Contains(city)).ToList();
                 return citiesList.Take(5);

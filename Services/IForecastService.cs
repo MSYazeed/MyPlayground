@@ -8,8 +8,8 @@ namespace MyPlayground.Services
 {
     public interface IForecastService
     {
-        Task<IEnumerable<Forecast>> GetWeatherForecasts(double latitude, double longitude);
-        IEnumerable<Forecast> MapWeatherForecasts(JObject forecasts);
+        Task<Forecast> GetWeatherForecasts(double latitude, double longitude);
+        Forecast MapWeatherForecasts(JObject forecasts);
         IEnumerable<CitiesList> GetCities(string city);
     }
 }

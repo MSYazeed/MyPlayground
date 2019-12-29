@@ -19,7 +19,7 @@ namespace MyPlayground.Controllers
 
         [HttpGet]
         [Route("forecast/search/{latitude},{longitude}")]
-        public async Task<IEnumerable<Forecast>> WeatherForecasts(/*[FromServices] IForecastService forecastService,*/ double latitude, double longitude)
+        public async Task<Forecast> WeatherForecasts(/*[FromServices] IForecastService forecastService,*/ double latitude, double longitude)
         {
             return await _forecastService.GetWeatherForecasts(latitude, longitude);
         }
