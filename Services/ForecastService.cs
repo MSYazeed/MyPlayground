@@ -35,12 +35,12 @@ namespace MyPlayground.Services
         public Forecast MapWeatherForecasts(JObject forecasts)
         {
             var forecastInfo = new Forecast();
-            var dateTime = new DateTime(1970, 1, 1, 0, 0, 0, 0);
-            forecastInfo.CurrentDateTimeFormatted = dateTime.AddSeconds(forecasts["currently"]["time"].Value<int>())
+            var dateTime = new DateTime(1970, 1, 1, 0, 0, 0, 0, System.DateTimeKind.Utc);
+            forecastInfo.CurrentDateTimeFormatted = dateTime.AddSeconds(forecasts["currently"]["time"].Value<int>()).ToLocalTime()
                 .ToString("dddd hh:mm");
-            forecastInfo.CurrentTemperatureC = forecasts["currently"]["temperature"].Value<double>();
-            forecastInfo.CurrentHumidity = forecasts["currently"]["humidity"].Value<double>();
-            forecastInfo.CurrentWindSpeed = forecasts["currently"]["windSpeed"].Value<double>();
+            forecastInfo.CurrentTemperatureC = forecasts["currently"]["temperature"].Value<int>();
+            forecastInfo.CurrentHumidity = Math.Round(forecasts["currently"]["humidity"].Value<double>(), 3);
+            forecastInfo.CurrentWindSpeed = Math.Round(forecasts["currently"]["windSpeed"].Value<double>(), 3);
             forecastInfo.CurrentSummary = forecasts["currently"]["summary"].Value<string>();
             forecastInfo.CurrentCondition = forecasts["currently"]["icon"].Value<string>();
 
@@ -50,7 +50,7 @@ namespace MyPlayground.Services
                     TemperatureCMax = forecast["temperatureMax"].Value<int>(),
                     TemperatureCMin = forecast["temperatureMin"].Value<int>(),
                     Summary = forecast["summary"].Value<string>(),
-                    Day = dateTime.AddSeconds(forecast["time"].Value<double>()).ToString("dddd"),
+                    Day = dateTime.AddSeconds(forecast["time"].Value<double>()).ToLocalTime().ToString("dddd"),
                     Condition = forecast["icon"].Value<string>()
                 });
 

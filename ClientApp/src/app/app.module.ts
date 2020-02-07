@@ -8,7 +8,9 @@ import { MatAutocompleteModule } from '@angular/material/autocomplete';
 
 import { AppComponent } from './app.component';
 import { NavMenuComponent } from './nav-menu/nav-menu.component';
-import { HomeComponent } from './home/home.component';
+import { UserComponent } from './user/user.component';
+import { LoginComponent } from './user/login/login.component';
+import { RegistrationComponent } from './user/registration/registration.component';
 import { ProductsComponent } from './products/products.component';
 import { CounterComponent } from './counter/counter.component';
 import { ForecastComponent } from './forecast/forecast.component';
@@ -18,10 +20,12 @@ import { BrowserAnimationsModule } from '@angular/platform-browser/animations';
   declarations: [
     AppComponent,
     NavMenuComponent,
-    HomeComponent,
+    UserComponent,
     CounterComponent,
     ForecastComponent,
-    ProductsComponent
+    ProductsComponent,
+    LoginComponent,
+    RegistrationComponent
   ],
   imports: [
     BrowserModule.withServerTransition({ appId: 'ng-cli-universal' }),
@@ -34,7 +38,12 @@ import { BrowserAnimationsModule } from '@angular/platform-browser/animations';
     MatIconModule,
     MatAutocompleteModule,
     RouterModule.forRoot([
-      { path: '', component: HomeComponent, pathMatch: 'full' },
+      { path: '', component: UserComponent,
+        children: [
+          { path: 'registration', component: RegistrationComponent },
+          { path: 'login', component: LoginComponent }
+        ] 
+      },
       { path: 'counter', component: CounterComponent },
       { path: 'forecast', component: ForecastComponent },
       { path: 'products', component: ProductsComponent }

@@ -35,7 +35,7 @@
       </div>
       <div class='group secondary'>
         <h3 id='wind'>Wind speed: {{forecasts.currentWindSpeed}} m/s</h3>
-        <h3 id='humidity'>Humidity: {{forecasts.currentHumidity * 100}} %</h3>
+        <h3 id='humidity'>Humidity: {{(forecasts.currentHumidity * 100).toFixed(2)}} %</h3>
       </div>
       <div class='temperature' id='temperature'>
         <h1 class='temp' id='temp'>{{convertTemperature(forecasts.currentTemperatureC)}}
@@ -63,7 +63,7 @@
       <div class='forecast' id='forecast'></div>
     </div>
   </div>
-  <div *ngFor="let forecast of forecasts.daysForecast | slice:1:6; let i=index" class='block'>
+  <div *ngFor="let forecast of forecasts.daysForecast | slice:0:5; let i=index" class='block'>
     <h3 class='secondary'> {{forecast.day}} </h3>
     <h2 class='high'> {{convertTemperature(forecast.temperatureCMax)}} </h2>
     <h4 class='secondary'> {{convertTemperature(forecast.temperatureCMin)}} </h4>

@@ -8,7 +8,8 @@ import { WeatherForecast, WeatherCondition } from './WeatherForecast';
 @Component({
   selector: 'app-forecast',
   templateUrl: './forecast.component.html',
-  styleUrls: ['./forecast.component.scss']
+  styleUrls: ['./forecast.component.scss'],
+  encapsulation: ViewEncapsulation.None
 })
 
 export class ForecastComponent {
